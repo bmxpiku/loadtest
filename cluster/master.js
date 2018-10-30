@@ -16,10 +16,21 @@ function start() {
   const port = process.env.PORT || 3000;
 
   app.get('/shut', (req, res) => {
+    const count = workers.length;
     workers.forEach(function(worker) {
       worker.send({msg: `Message from master ${process.pid}`, shutDown: 1});
     });
-    return res.status(200).send(arr);
+    return res.status(200).send(`Killed ${count} child processes`);
+  });
+
+  app.get('/create/:amount', (req, res) => {
+    const count = workers.length + parseInt(req.params.amount);
+    for (let i = workers.length; i < count; i++) {
+      console.log(`Forking process number ${i}...`);
+      const worker = cluster.fork();
+      workers.push(worker);
+    }
+    return res.status(200).send(`Created ${req.params.amount} child processes`);
   });
 
   const init = async () => {

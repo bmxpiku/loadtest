@@ -1,6 +1,6 @@
 const request = require('request');
 // const fs = require('fs');
-const URL = process.env.STREAM_URL;
+const URL = process.env.STREAM_URL || 'http://live.taleradio.dk/24syv';
 const devnull = require('dev-null');
 
 async function childProcess() {
