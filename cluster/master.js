@@ -8,7 +8,7 @@ function start() {
   console.log(`Master ${process.pid} is running`);
   // Fork workers
   for (let i = 0; i < parseInt(CHILD_PROCESSES); i++) {
-    console.log(`Forking process number ${i}...`);
+    console.log(`Forking slave child number ${i}...`);
     const worker = cluster.fork();
     workers.push(worker);
   }
@@ -26,7 +26,7 @@ function start() {
   app.get('/create/:amount', (req, res) => {
     const count = workers.length + parseInt(req.params.amount);
     for (let i = workers.length; i < count; i++) {
-      console.log(`Forking process number ${i}...`);
+      console.log(`Forking slave child number ${i}...`);
       const worker = cluster.fork();
       workers.push(worker);
     }
@@ -43,6 +43,26 @@ function start() {
     process.exit(1);
   });
   init();
+
+  // repeat with the interval of 5 seconds
+  let timerId = setInterval(() => allOverAgain(), 5000);
+
+// after 12 seconds stop
+  setTimeout(() => { clearInterval(timerId); console.log('stop'); }, 12000);
+}
+
+function allOverAgain() {
+  for (let i = 0; i < workers.length; i++) {
+    const worker = workers[i];
+    console.log(worker.process.pid + ' wants to suicide');
+    worker.kill();
+  }
+
+  for (let i = 0; i < parseInt(CHILD_PROCESSES); i++) {
+    console.log(`Forking slave child number ${i}...`);
+    const worker = cluster.fork();
+    workers.push(worker);
+  }
 }
 
 module.exports = {
