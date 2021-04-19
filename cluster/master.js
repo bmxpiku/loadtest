@@ -44,11 +44,11 @@ function start() {
   });
   init();
 
-  // repeat with the interval of 5 seconds
-  let timerId = setInterval(() => allOverAgain(), 5000);
+  // repeat with the interval of 6 seconds
+  let timerId = setInterval(() => allOverAgain(), 10000);
 
-// after 12 seconds stop
-  setTimeout(() => { clearInterval(timerId); console.log('stop'); }, 12000);
+// after 15 seconds stop
+  setTimeout(() => { clearInterval(timerId); console.log('stop'); }, 120000);
 }
 
 function allOverAgain() {
